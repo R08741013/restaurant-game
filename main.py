@@ -2,21 +2,23 @@ import pygame
 from UI import *
 pygame.init()
 info = pygame.display.Info()
-width, height = 1850, 950
-screen = pygame.display.set_mode((width, height))
-
+screenWidth, screenHeight = 700, 525
+width, height = 400, 300
+#window = pygame.display.set_mode((width, height))
+screen = pygame.Surface((width, height))
+window = pygame.display.set_mode((screenWidth, screenHeight))
 clock = pygame.time.Clock()
 
 quitted = False
 first = True
-
+ 
 white = (255, 255, 255)
 black = (0, 0, 0)
 
-meW, meH = 105, 165 # Ratio = 7:11
+me = pygame.image.load('./Sources/Something.png').convert()
+tableTex = pygame.image.load('./Sources/Table.png').convert()
 
-me = pygame.transform.scale(pygame.image.load('./Sources/Something.png'), (105, 165))
-tableTex = pygame.transform.scale(pygame.image.load('./Sources/Table.png'), (270, 240))
+meW, meH = me.get_width(), me.get_height()
 
 t = pygame.Rect(0, 0, width, 1)
 l = pygame.Rect(0, 0, 1, height)
@@ -50,15 +52,18 @@ class table:
         self.tableNum = num
         self.x = x
         self.y = y
-        self.rect = pygame.Rect(x, y, 250, 150)
+        self.rect = pygame.Rect(x, y, 270, 145)
         self.occupied = False
         self.numCustomers = 0
         
     def display(self):
+        pass
+        '''
         if not self.occupied:
             screen.blit(tableTex, (self.x, self.y))
+            pygame.draw.rect(screen, (0, 255, 0), self.rect, 2)
         else:
-            pygame.draw.rect(screen, (127, 0, 0), self.rect, 0)
+            pygame.draw.rect(screen, (127, 0, 0), self.rect, 0)'''
 
     def collide(self, rectangle):
         if self.rect.colliderect(rectangle):
@@ -67,7 +72,6 @@ class table:
             return False
 
     def dosomething(self):
-        #print("Table")
         pass
 
 def game():
@@ -80,9 +84,9 @@ def game():
         meRect = pygame.Rect(width/2, height/2, meW, meH)
         tables = []
         tables.append(table(0, 0, 1))
-        tables.append(table(0, 250, 2))
-        tables.append(table(0, 500, 3))
-        tables.append(table(0, 750, 4))
+        #tables.append(table(0, 250, 2))
+        #tables.append(table(0, 500, 3))
+        #tables.append(table(0, 750, 4))
 
     COL = False
     speed = 0.01
@@ -109,10 +113,10 @@ def game():
     meRect = pygame.Rect(meP.x, meP.y, meW, meH)
     meA.mult(0)
     screen.blit(me, (meP.x, meP.y))
-    pygame.draw.rect(screen, (0, 255, 0), meRect, 2)
+    #pygame.draw.rect(screen, (0, 255, 0), meRect, 1)
     for t in tables:
-        t.display()
-        '''
+            t.display()
+            '''
         if t.collide(meRect):
             COL = True
             if t.occupied:
@@ -134,8 +138,6 @@ def game():
         if keysPressed[pygame.K_p] == 1:
             tables[0].occupied = False
 
-
-
 while not quitted:
     for event in pygame.event.get():
         if event.type == pygame.QUIT or pygame.key.get_pressed()[pygame.K_ESCAPE] == 1:
@@ -144,7 +146,7 @@ while not quitted:
     mouseX, mouseY = pygame.mouse.get_pos()
     screen.fill(white)
     game()
-
+    window.blit(pygame.transform.scale(screen, (screenWidth, screenHeight)).convert(), (0, 0))
     pygame.display.update()
     clock.tick(480)
 
